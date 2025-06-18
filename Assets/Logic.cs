@@ -8,24 +8,24 @@ using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.WSA;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
-using Microsoft.Win32.SafeHandles;
-public class Ball : MonoBehaviour
+public class Logic : MonoBehaviour
 {
-    public float speed;
-    public GameObject ball;
     public GameObject launchPoint;
     public GameObject dangerZone;
     public GameObject goalZone;
     public GameObject fishingReel;
-    public Rigidbody2D rb;
+    public GameObject ball;
     public Vector3 launchPosition;
     public Vector2 reel;
+    PolygonCollider2D ballBox;
+    Ball BallLogic = null;
     PlayerControls controls;
-
-
-    public float gravity;
     private void Awake()
     {
+        BallLogic = ball.GetComponent<Ball>();
+        Debug.Log("this is ball" + BallLogic.name);
+        ballBox = BallLogic.GetComponent<PolygonCollider2D>();
+        Debug.Log("the ball has a collider:" + ballBox);
         controls = new PlayerControls();
         controls.Gameplay.Reeling.performed += ctx => reel = ctx.ReadValue<Vector2>();
         controls.Gameplay.Reeling.canceled += ctx => reel = Vector2.zero;
@@ -41,7 +41,6 @@ public class Ball : MonoBehaviour
         //controls.Gameplay.PressRS.performed += ctx => PressRS();
 
     }
-
     private void OnEnable()
     {
         controls.Gameplay.Enable();
@@ -50,27 +49,20 @@ public class Ball : MonoBehaviour
     {
         controls.Gameplay.Disable();
     }
-
-    public void Start()
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
-        gravity = ball.GetComponent<Rigidbody2D>().gravityScale;
+        Debug.Log("(in)sanity check...");
     }
+
     // Update is called once per frame
     void Update()
     {
-        Vector3 m = new Vector3 (reel.x * 5, 0, reel.y * 5);
+        Vector3 m = new Vector3(reel.x * 5, 0, reel.y * 5);
         fishingReel.GetComponent<Transform>().Rotate(Vector3.up * reel.y * .2f);
-
-    }
-    public void Launch()
-    {
-        rb.constraints = RigidbodyConstraints2D.None;
-        rb.gravityScale = gravity;
-        rb.AddForceY(500f);
     }
     void OnTriggerStay2D(Collider2D other)
     {
-        PolygonCollider2D ballBox = ball.GetComponent<PolygonCollider2D>();
         BoxCollider2D failure = dangerZone.GetComponent<BoxCollider2D>();
         if ((other.gameObject == dangerZone) && (ballBox.bounds.Intersects(failure.bounds)))
         {
@@ -80,44 +72,33 @@ public class Ball : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if ((other.gameObject.CompareTag("Goal")))
+        PolygonCollider2D ballBox = BallLogic.GetComponent<PolygonCollider2D>();
+        BoxCollider2D goal = goalZone.GetComponent<BoxCollider2D>();
+        if ((other.gameObject == goalZone) && (ballBox.bounds.Intersects(goal.bounds)))
         {
             Debug.Log("Looks like you got something! Reel it in!");
-            rb.linearVelocityX = 0;
-            rb.linearVelocityY = 0;
-            rb.gravityScale = 0f;
-            rb.constraints = RigidbodyConstraints2D.FreezePositionX
-                        & RigidbodyConstraints2D.FreezePositionY
-                        & RigidbodyConstraints2D.FreezeRotation;
-            StartCoroutine(DelayReelIn(5f));
-            return;
+            //BeginFishing();
         }
     }
     public IEnumerator DelayLaunch(float delay)
     {
         yield return new WaitForSeconds(delay);
-        Launch();
-    }
-    public IEnumerator DelayReelIn(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        Reset();
+        BallLogic.Launch();
     }
     public void Reset()
     {
         Debug.Log("ball is now being reset");
         launchPosition = new Vector2(launchPoint.transform.position.x, launchPoint.transform.position.y);
         transform.position = launchPosition;
-        rb.linearVelocity = Vector2.zero;
-        rb.angularVelocity = 0;
-        rb.gravityScale = 0f;
-        rb.constraints = RigidbodyConstraints2D.FreezePositionX 
-                        & RigidbodyConstraints2D.FreezePositionY 
+        BallLogic.rb.linearVelocity = Vector2.zero;
+        BallLogic.rb.gravityScale = 0f;
+        BallLogic.rb.constraints = RigidbodyConstraints2D.FreezePositionX
+                        & RigidbodyConstraints2D.FreezePositionY
                         & RigidbodyConstraints2D.FreezeRotation;
         StartCoroutine(DelayLaunch(2f));
         return;
     }
-    // function for second part of fishing mini game, in which the player must reel in the fish using a button prompt
+    // function for second part of fishing mini game, in which the player must reel in the fish using the analog stick
     public void BeginFishing()
     {
 
