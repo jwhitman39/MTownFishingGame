@@ -6,14 +6,17 @@ using Color = UnityEngine.Color;
 
 public class Ticker : MonoBehaviour
 {
-    // Float a rigidbody object a set distance above a surface.
-    //private var rayCastHit : RaycastHit;
-    public float floatHeight;     // Desired floating height.
-    public float liftForce;       // Force to apply when lifting the rigidbody.
-    public float damping;         // Force reduction proportional to speed (reduces bouncing).
     public Color rayColor = Color.blue;
+    public Color rayColor2 = Color.red;
     public Rigidbody2D rb2D;
     public RaycastHit2D hit;
+    public RaycastHit2D hit2;
+    public float fishingScore = 0;
+    public bool topLever = false;
+    public bool bottomLever = false;
+    public GameObject spoolEnd;
+    float length = 0.3f;
+
 
 
     void Start()
@@ -23,27 +26,24 @@ public class Ticker : MonoBehaviour
 
     void FixedUpdate()
     {
-        Debug.DrawRay(transform.position, Vector3.down, rayColor);
+        Debug.DrawRay(spoolEnd.transform.position, Vector3.left * length, rayColor);
+        Debug.DrawRay(spoolEnd.transform.position, Vector3.right * length, rayColor2);
         // Cast a ray straight down.
-        hit = Physics2D.Raycast(transform.position, Vector2.left, 4, LayerMask.GetMask("FishingRod"));
+        hit = Physics2D.Raycast(spoolEnd.transform.position, Vector2.left, length, LayerMask.GetMask("FishingRod"));
+        hit2 = Physics2D.Raycast(spoolEnd.transform.position, Vector2.right, length, LayerMask.GetMask("FishingRod"));
         Debug.Log("hit is " + hit + "and hit.collider is " + hit.collider);
         if (hit && hit.collider.name == "Lever")
         {
             Debug.Log("successful hit.");
-
-
-
-            //// Calculate the distance from the surface and the "error" relative
-            //// to the floating height.
-            //float distance = Mathf.Abs(hit.point.x - transform.position.x);
-            //float heightError = floatHeight - distance;
-
-            //// The force is proportional to the height error, but we remove a part of it
-            //// according to the object's speed.
-            //float force = GetComponent<Transform>().line
-
-            //// Apply the force to the rigidbody.
-            //rb2D.AddForce(Vector2.left * force);
+            hit.collider.attachedRigidbody.MoveRotation(90);
+            topLever = true;
         }
+        if (hit2 && hit2.collider.name == "TopLever")
+        {
+            Debug.Log("successful hit up top.");
+            hit.collider.attachedRigidbody.MoveRotation(90);
+            bottomLever = true; 
+        }
+        
     }
 }

@@ -559,7 +559,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0, g: 0.6440244, b: 1, a: 1}
   m_FlipX: 0
@@ -1332,6 +1332,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &741227919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 741227920}
+  m_Layer: 0
+  m_Name: SpoolEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &741227920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741227919}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: 0.21718732, w: 0.97612995}
+  m_LocalPosition: {x: -0.0052828826, y: 0.9350006, z: 0}
+  m_LocalScale: {x: 6.842186, y: 5.1338563, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1927053124}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &824587750 stripped
 GameObject:
@@ -4257,7 +4288,7 @@ HingeJoint2D:
   m_UseConnectedAnchor: 1
   m_UseMotor: 1
   m_Motor:
-    m_MotorSpeed: 52.05
+    m_MotorSpeed: 155.8
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
@@ -4344,7 +4375,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 53.31
+  m_Mass: 109.37
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
@@ -4543,7 +4574,7 @@ GameObject:
   - component: {fileID: 1927053131}
   - component: {fileID: 1927053132}
   m_Layer: 6
-  m_Name: Capsule
+  m_Name: Spool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4561,7 +4592,8 @@ Transform:
   m_LocalPosition: {x: 0.3129999, y: 0.58900005, z: 0}
   m_LocalScale: {x: 0.13250001, y: 0.2084375, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 741227920}
   m_Father: {fileID: 1290320081}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -25.088}
 --- !u!212 &1927053125
@@ -4626,7 +4658,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1927053123}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -4700,7 +4732,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 38.16
+  m_Mass: 81.2
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
@@ -4833,16 +4865,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1927053123}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc4ca383effee4c4ea4c79fde22591bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floatHeight: 4.14
-  liftForce: 141.6
-  damping: 2.05
   rayColor: {r: 0, g: 0, b: 1, a: 1}
+  rayColor2: {r: 1, g: 0, b: 0, a: 1}
   rb2D: {fileID: 1913276610}
+  fishingScore: 0
+  topLever: 0
+  bottomLever: 0
+  spoolEnd: {fileID: 741227919}
 --- !u!233 &1927053132
 HingeJoint2D:
   m_ObjectHideFlags: 0
