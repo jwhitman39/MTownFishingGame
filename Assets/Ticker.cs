@@ -15,7 +15,7 @@ public class Ticker : MonoBehaviour
     public bool topLever = false;
     public bool bottomLever = false;
     public GameObject spoolEnd;
-    float length = 0.3f;
+    float length = 0.4f;
 
 
 
@@ -35,15 +35,24 @@ public class Ticker : MonoBehaviour
         if (hit && hit.collider.name == "Lever")
         {
             Debug.Log("successful hit.");
-            hit.collider.attachedRigidbody.MoveRotation(90);
-            topLever = true;
+            hit.collider.attachedRigidbody.MoveRotation(100);
+            bottomLever = true;
         }
         if (hit2 && hit2.collider.name == "TopLever")
         {
             Debug.Log("successful hit up top.");
-            hit.collider.attachedRigidbody.MoveRotation(90);
-            bottomLever = true; 
+            hit2.collider.attachedRigidbody.MoveRotation(100);
+            topLever = true; 
+        }
+        if (bottomLever && topLever)
+        {
+            AddScore();
         }
         
+    }
+    void AddScore()
+    {
+            fishingScore++;
+            Debug.Log(fishingScore);
     }
 }

@@ -15,20 +15,24 @@ public class Logic : MonoBehaviour
     public GameObject goalZone;
     public GameObject fishingReel;
     public GameObject ball;
+    public GameObject tickers;
     public Vector3 launchPosition;
     public Vector2 reel;
     PolygonCollider2D ballBox;
     Ball BallLogic = null;
+    Ticker TickerLogic = null;
     PlayerControls controls;
     private void Awake()
     {
         BallLogic = ball.GetComponent<Ball>();
+        TickerLogic = tickers.GetComponent<Ticker>();
         Debug.Log("this is ball" + BallLogic.name);
         ballBox = BallLogic.GetComponent<PolygonCollider2D>();
         Debug.Log("the ball has a collider:" + ballBox);
         controls = new PlayerControls();
         controls.Gameplay.Reeling.performed += ctx => reel = ctx.ReadValue<Vector2>();
         controls.Gameplay.Reeling.canceled += ctx => reel = Vector2.zero;
+        // just in case we do button prompts...
         //controls.Gameplay.PressA.performed += ctx => PressA();
         //controls.Gameplay.PressB.performed += ctx => PressB();
         //controls.Gameplay.PressY.performed += ctx => PressY();
