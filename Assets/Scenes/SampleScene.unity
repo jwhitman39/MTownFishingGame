@@ -1179,16 +1179,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 656814724}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 786818978}
+  m_Father: {fileID: 1844347580}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 173, y: 154}
+  m_AnchoredPosition: {x: 82, y: -2}
   m_SizeDelta: {x: 49.229, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &656814726
@@ -1221,7 +1221,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_fontColor: {r: 0, g: 1, b: 0.70645714, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1628,7 +1628,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1844347580}
-  - {fileID: 656814725}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3891,11 +3890,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7837489777261174630, guid: 2f959a72c49747b4085ad74547506f7c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.4567
+      value: -0.41
       objectReference: {fileID: 0}
     - target: {fileID: 7837489777261174630, guid: 2f959a72c49747b4085ad74547506f7c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.9407198
+      value: 1.56
       objectReference: {fileID: 0}
     - target: {fileID: 7837489777261174630, guid: 2f959a72c49747b4085ad74547506f7c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4568,7 +4567,7 @@ GameObject:
   - component: {fileID: 1844347582}
   - component: {fileID: 1844347581}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4583,14 +4582,15 @@ RectTransform:
   m_GameObject: {fileID: 1844347579}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.779, y: 0.779, z: 0.779}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 656814725}
   m_Father: {fileID: 786818978}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 172, y: 170}
+  m_AnchoredPosition: {x: 170, y: 168}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1844347581

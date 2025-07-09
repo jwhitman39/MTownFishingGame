@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Net.Sockets;
 using TMPro;
@@ -12,7 +13,7 @@ public class Ticker : MonoBehaviour
     public Color rayColor2 = Color.red;
     public Rigidbody2D rb2D;
     public RaycastHit2D hit;
-    public RaycastHit2D hit2;
+    public RaycastHit2D     hit2;
     public float fishingScore = 0;
     public bool topLever = false;
     public bool bottomLever = false;
