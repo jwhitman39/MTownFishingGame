@@ -20,6 +20,7 @@ public class Ticker : MonoBehaviour
     public GameObject spoolEnd;
     public GameObject reelAmount;
     float length = 0.4f;
+    public Fish FishLogic = null;
 
 
 
@@ -54,7 +55,6 @@ public class Ticker : MonoBehaviour
         {
             AddScore();
         }
-        
     }
     void AddScore()
     {

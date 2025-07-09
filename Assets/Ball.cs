@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using Microsoft.Win32.SafeHandles;
 using System;
+using UnityEngine.UI;
 public class Ball : MonoBehaviour
 {
     public float speed;
@@ -18,19 +19,23 @@ public class Ball : MonoBehaviour
     public GameObject dangerZone;
     public GameObject goalZone;
     public GameObject fishingReel;
-    public List<GameObject> findFish;
     public GameObject fish;
     public GameObject chosenFish;
     public GameObject fishDisplay;
+    public GameObject canvas;
+    public GameObject requiredAmount;
+    public List<GameObject> findFish;
     public Rigidbody2D rb;
     public Vector3 launchPosition;
     public Vector2 reel;
+    public bool isFishing = false;
     PlayerControls controls;
-
+    Fish FishLogic = null;
 
     public float gravity;
     private void Awake()
     {
+        findFish.AddRange(GameObject.FindGameObjectsWithTag("FishList"));
         controls = new PlayerControls();
         controls.Gameplay.Reeling.performed += ctx => reel = ctx.ReadValue<Vector2>();
         controls.Gameplay.Reeling.canceled += ctx => reel = Vector2.zero;
@@ -58,6 +63,7 @@ public class Ball : MonoBehaviour
 
     public void Start()
     {
+        requiredAmount = null;
         gravity = ball.GetComponent<Rigidbody2D>().gravityScale;
     }
     // Update is called once per frame
@@ -65,7 +71,12 @@ public class Ball : MonoBehaviour
     {
         Vector3 m = new Vector3 (reel.x * 5, 0, reel.y * 5);
         fishingReel.GetComponent<Transform>().Rotate(Vector3.up * reel.y * .2f);
-
+        
+        if (isFishing)
+        {
+            Debug.Log(FishLogic.requiredReels.ToString());
+            
+        }
     }
     public void Launch()
     {
@@ -95,6 +106,7 @@ public class Ball : MonoBehaviour
                         & RigidbodyConstraints2D.FreezePositionY
                         & RigidbodyConstraints2D.FreezeRotation;
             BeginFishing();
+            isFishing = true;
             StartCoroutine(DelayReelIn(5f));
             return;
         }
@@ -126,36 +138,27 @@ public class Ball : MonoBehaviour
     // function for second part of fishing mini game, in which the player must reel in the fish using a button prompt
     public void BeginFishing()
     {
-        // add to the findFish list all fishes with the correct tag
-        findFish.AddRange(GameObject.FindGameObjectsWithTag("FishList"));
-        //  loop through just once and find a random fish in the list
-        for (int i = 0; i < 2; i++)
+        // the index for the loop selects a random piece within the list
+        int index = UnityEngine.Random.Range(0, findFish.Count);
+        Debug.Log("index is " + index);
+        if (findFish[index] != null)
         {
-            // the index for the loop selects a random piece within the list
-            int index = UnityEngine.Random.Range(1, findFish.Count);
-            Debug.Log("index is " + index);
-            if (findFish[index] != null)
-            {
-                Debug.Log("the randomly chosen fish is " + chosenFish);
-                // the chosen fish is the random fish that was found
-                chosenFish = findFish[index];
-                // instantiate the chosen fish at the position of the display
-                GameObject newFish = Instantiate(chosenFish, new Vector3(fishDisplay.transform.position.x,
-                                                                     fishDisplay.transform.position.y,
-                                                                     fishDisplay.transform.position.z),
-                                                                     fishDisplay.transform.rotation);
-                newFish.name = findFish[i].name;
-
-            }
-            else if (index > findFish.Count)
-            {
-                Debug.Log("the index of the chosen piece is " + index);
-                return;
-            }
-            else
-            {
-                return;
-            }
+            // the chosen fish is the random fish that was found
+            chosenFish = findFish[index];
+            Debug.Log("the randomly chosen fish is " + chosenFish);
+            // instantiate the chosen fish at the position of the display
+            GameObject newFish = Instantiate(chosenFish, new Vector3(fishDisplay.transform.position.x,
+                                                                 fishDisplay.transform.position.y,
+                                                                 fishDisplay.transform.position.z),
+                                                                 fishDisplay.transform.rotation);
+            newFish.name = chosenFish.name;
+            GameObject tempObj = GameObject.Find(newFish.name.ToString());
+            FishLogic = tempObj.GetComponent<Fish>();
+            requiredAmount.GetComponent<TextMeshProUGUI>().text = FishLogic.requiredReels.ToString();
+        }
+        else
+        {
+            return;
         }
     }
 }
