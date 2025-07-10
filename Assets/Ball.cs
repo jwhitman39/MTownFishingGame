@@ -19,16 +19,21 @@ public class Ball : MonoBehaviour
     public GameObject dangerZone;
     public GameObject goalZone;
     public GameObject fishingReel;
-    public GameObject fish;
     public GameObject chosenFish;
+    public GameObject newFish;
     public GameObject fishDisplay;
     public GameObject canvas;
     public GameObject requiredAmount;
+    public GameObject display;
+    public RectTransform rectTransform;
     public List<GameObject> findFish;
     public Rigidbody2D rb;
     public Vector3 launchPosition;
     public Vector2 reel;
     public bool isFishing = false;
+    public bool isExpiring = false;
+    public bool isCaught = false;
+    public bool isExpired = false;
     PlayerControls controls;
     Fish FishLogic = null;
 
@@ -36,6 +41,7 @@ public class Ball : MonoBehaviour
     private void Awake()
     {
         findFish.AddRange(GameObject.FindGameObjectsWithTag("FishList"));
+        rectTransform = display.GetComponent<RectTransform>();
         controls = new PlayerControls();
         controls.Gameplay.Reeling.performed += ctx => reel = ctx.ReadValue<Vector2>();
         controls.Gameplay.Reeling.canceled += ctx => reel = Vector2.zero;
@@ -63,7 +69,6 @@ public class Ball : MonoBehaviour
 
     public void Start()
     {
-        requiredAmount = null;
         gravity = ball.GetComponent<Rigidbody2D>().gravityScale;
     }
     // Update is called once per frame
@@ -72,10 +77,23 @@ public class Ball : MonoBehaviour
         Vector3 m = new Vector3 (reel.x * 5, 0, reel.y * 5);
         fishingReel.GetComponent<Transform>().Rotate(Vector3.up * reel.y * .2f);
         
-        if (isFishing)
+        if (isFishing && !isExpiring)
         {
+            requiredAmount.GetComponent<TextMeshProUGUI>().text = FishLogic.requiredReels.ToString();
             Debug.Log(FishLogic.requiredReels.ToString());
-            
+            ExpireFish();
+        }
+        if (rectTransform.sizeDelta.y == 100)
+        {
+            Debug.Log("the fish got away :O ");
+            isExpired = true;
+            isFishing = false;
+        }
+        if (isExpired)
+        {
+            DestroyImmediate(newFish);
+            isFishing = false;
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 0);
         }
     }
     public void Launch()
@@ -83,6 +101,11 @@ public class Ball : MonoBehaviour
         rb.constraints = RigidbodyConstraints2D.None;
         rb.gravityScale = gravity;
         rb.AddForceY(500f);
+    }
+    public IEnumerator DelayLaunch(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Launch();
     }
     void OnTriggerStay2D(Collider2D other)
     {
@@ -96,7 +119,7 @@ public class Ball : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if ((other.gameObject.CompareTag("Goal")))
+        if (other.gameObject.CompareTag("Goal") && !isFishing && !isExpired)
         {
             Debug.Log("Looks like you got something! Reel it in!");
             rb.linearVelocityX = 0;
@@ -110,11 +133,6 @@ public class Ball : MonoBehaviour
             StartCoroutine(DelayReelIn(5f));
             return;
         }
-    }
-    public IEnumerator DelayLaunch(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        Launch();
     }
     public IEnumerator DelayReelIn(float delay)
     {
@@ -153,12 +171,30 @@ public class Ball : MonoBehaviour
                                                                  fishDisplay.transform.rotation);
             newFish.name = chosenFish.name;
             GameObject tempObj = GameObject.Find(newFish.name.ToString());
+            Debug.Log("tempObj is " + tempObj.name);
             FishLogic = tempObj.GetComponent<Fish>();
-            requiredAmount.GetComponent<TextMeshProUGUI>().text = FishLogic.requiredReels.ToString();
+            Debug.Log("required reels is " +  FishLogic.requiredReels);
+            Debug.Log("required amount is " + requiredAmount.GetComponent<TextMeshProUGUI>().text);
         }
         else
         {
             return;
+        }
+    }
+    public IEnumerator DelayExpireFish(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Debug.Log("new expiration should happen now...");
+        ExpireFish();
+    }
+    public void ExpireFish()
+    {
+        if (!isCaught && !isExpired)
+        {
+            isExpiring = true;
+            Debug.Log("fish expiring now...");
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y + 20);
+            StartCoroutine(DelayExpireFish(1f));
         }
     }
 }
