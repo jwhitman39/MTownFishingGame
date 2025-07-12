@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 using Microsoft.Win32.SafeHandles;
 using System;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 public class Ball : MonoBehaviour
 {
     public float speed;
@@ -36,12 +37,15 @@ public class Ball : MonoBehaviour
     public bool isExpired = false;
     PlayerControls controls;
     Fish FishLogic = null;
+    Ticker TickerLogic = null;
 
     public float gravity;
     private void Awake()
     {
         findFish.AddRange(GameObject.FindGameObjectsWithTag("FishList"));
         rectTransform = display.GetComponent<RectTransform>();
+        GameObject tempObj1 = GameObject.Find("Spool");
+        TickerLogic = tempObj1.GetComponent<Ticker>();
         controls = new PlayerControls();
         controls.Gameplay.Reeling.performed += ctx => reel = ctx.ReadValue<Vector2>();
         controls.Gameplay.Reeling.canceled += ctx => reel = Vector2.zero;
@@ -83,17 +87,34 @@ public class Ball : MonoBehaviour
             Debug.Log(FishLogic.requiredReels.ToString());
             ExpireFish();
         }
-        if (rectTransform.sizeDelta.y == 100)
+        if (isExpiring)
         {
-            Debug.Log("the fish got away :O ");
-            isExpired = true;
-            isFishing = false;
+            if (rectTransform.sizeDelta.y == 100)
+            {
+                Debug.Log("the fish got away :O ");
+                isExpired = true;
+                isFishing = false;
+                StopAllCoroutines();
+            }
+            if (TickerLogic.fishingScore >= FishLogic.requiredReels)
+            {
+                isCaught = true;
+                isFishing = false;
+                StopAllCoroutines();
+            }
         }
-        if (isExpired)
+        if (isExpired || isCaught)
         {
-            DestroyImmediate(newFish);
-            isFishing = false;
-            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 0);
+            if(isCaught)
+            {
+                Debug.Log("congrats! You reeled in the " + chosenFish.name);
+                ResetDisplay();
+            }
+            if(isExpired)
+            {
+                Debug.Log("Oh no, the " + chosenFish.name + " got away :/ ");
+                ResetDisplay();
+            }
         }
     }
     public void Launch()
@@ -141,6 +162,7 @@ public class Ball : MonoBehaviour
     }
     public void Reset()
     {
+        isCaught = false;
         Debug.Log("ball is now being reset");
         launchPosition = new Vector2(launchPoint.transform.position.x, launchPoint.transform.position.y);
         transform.position = launchPosition;
@@ -159,7 +181,7 @@ public class Ball : MonoBehaviour
         // the index for the loop selects a random piece within the list
         int index = UnityEngine.Random.Range(0, findFish.Count);
         Debug.Log("index is " + index);
-        if (findFish[index] != null)
+        if (findFish[index] != null )
         {
             // the chosen fish is the random fish that was found
             chosenFish = findFish[index];
@@ -169,12 +191,13 @@ public class Ball : MonoBehaviour
                                                                  fishDisplay.transform.position.y,
                                                                  fishDisplay.transform.position.z),
                                                                  fishDisplay.transform.rotation);
-            newFish.name = chosenFish.name;
+            //newFish.name = chosenFish.name;
             GameObject tempObj = GameObject.Find(newFish.name.ToString());
             Debug.Log("tempObj is " + tempObj.name);
             FishLogic = tempObj.GetComponent<Fish>();
             Debug.Log("required reels is " +  FishLogic.requiredReels);
             Debug.Log("required amount is " + requiredAmount.GetComponent<TextMeshProUGUI>().text);
+            return;
         }
         else
         {
@@ -183,9 +206,16 @@ public class Ball : MonoBehaviour
     }
     public IEnumerator DelayExpireFish(float delay)
     {
-        yield return new WaitForSeconds(delay);
-        Debug.Log("new expiration should happen now...");
-        ExpireFish();
+        if (!isCaught || !isExpired)
+        {
+            yield return new WaitForSeconds(delay);
+            Debug.Log("new expiration should happen now...");
+            ExpireFish();
+        }
+        if (isExpired || isCaught)
+        {
+            ResetDisplay();
+        }
     }
     public void ExpireFish()
     {
@@ -196,5 +226,18 @@ public class Ball : MonoBehaviour
             rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y + 20);
             StartCoroutine(DelayExpireFish(1f));
         }
+
+    }
+    public void ResetDisplay()
+    {
+        FishLogic.remove = true;
+        TickerLogic.fishingScore = 0;
+        isExpiring = false;
+        isExpired = false;
+        isFishing = false;
+        Debug.Log("reset display now...");
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 0);
+        requiredAmount.GetComponent<TextMeshProUGUI>().text = null;
+        Reset();
     }
 }
